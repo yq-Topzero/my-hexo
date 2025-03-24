@@ -1,0 +1,308 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* font-family: 'Poppins', sans-serif; */
+}
+
+/* :root 的用法不会的看这里 https://blog.csdn.net/weixin_51123974/article/details/122311909 */
+:root {
+  --clr: #fbfcff;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--clr);
+}
+
+.navigation {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 70px;
+  background: #000000;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: env(safe-area-inset-bottom);
+  /* 添加阴影提升层次感 */
+  /* box-shadow: 0 5px 15px rgba(0,0,0,0.2); */
+}
+
+.navigation ul {
+  display: flex;
+  width: 350px;
+}
+
+.navigation ul li {
+  position: relative;
+  list-style: none;
+  width: 70px;
+  height: 70px;
+  z-index: 1;
+}
+
+.navigation ul li a {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  text-align: center;
+  font-weight: 500;
+}
+
+.navigation ul li a .icon {
+  position: relative;
+  display: block;
+  line-height: 75px;
+  font-size: 1.5em;
+  text-align: center;
+  transition: 0.5s;
+  color: var(--clr);
+}
+
+.navigation ul li.active a .icon {
+  transform: translateY(-32px);
+}
+
+.navigation ul li a .text {
+  position: absolute;
+  color: var(--clr);
+  font-weight: 400;
+  letter-spacing: 0.05em; /* 字符间距 */
+  transition: 0.5s;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.navigation ul li.active a .text {
+  opacity: 1;
+  transform: translateY(10px);
+} 
+
+.indicator {
+  position: absolute;
+  top: -50%;
+  width: 70px;
+  height: 70px;
+  background: #81a087;
+  border-radius: 50%;
+  border: 6px solid var(--clr);
+  transition: 0.5s;
+}
+
+.indicator::before{
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -22px;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border-top-right-radius: 20px;
+  box-shadow: 1px -10px 0 0 var(--clr);
+}
+
+.indicator::after{
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -22px;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border-top-left-radius: 20px;
+  box-shadow: -1px -10px 0 0 var(--clr);
+}
+/* 修改图标相关样式 */
+.menu-icon {
+  width: 24px;  /* 根据实际图片尺寸调整 */
+  height: 24px;
+  vertical-align: middle;
+  transition: 0.5s;
+}
+
+.navigation ul li.active a .icon {
+  transform: translateY(-32px);
+}
+
+/* 保持原有其他样式不变 */
+.navigation ul li:nth-child(1).active ~ .indicator {
+  transform: translateX(calc(70px * 0));
+}
+.navigation ul li:nth-child(2).active ~ .indicator {
+  transform: translateX(calc(70px * 1));
+}
+.navigation ul li:nth-child(3).active ~ .indicator {
+  transform: translateX(calc(70px * 2));
+}
+.navigation ul li:nth-child(4).active ~ .indicator {
+  transform: translateX(calc(70px * 3));
+}
+.navigation ul li:nth-child(5).active ~ .indicator {
+  transform: translateX(calc(70px * 4));
+}
+/*==============================*/
+.bottom-nav {
+  height:52px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 0 8px;
+  box-sizing: border-box;
+  /* 适配iPhone安全区域 */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.dock-bar {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  border-radius: 28px 28px 0 0;
+  padding: 12px 0;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  transform: translateY(0);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width:32px;
+  height:32px;
+}
+
+.nav-icon {
+  position: relative;
+  display: inline-block;
+  padding: 8px;
+  margin-bottom: 4px;
+  width:100%;
+  height:100%;
+}
+
+.nav-icon img {
+  width: 32px;
+  height: 32px;
+  /* vertical-align: middle; */
+  object-fit: contain;
+  transition: opacity 0.2s ease;
+}
+
+.active-icon {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  opacity: 0;
+}
+
+
+.nav-label {
+  display: none;
+  font-size: 9px;
+  color: #666;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  transform: scale(0.9);
+}
+
+/* 中间悬浮按钮 */
+.center-dock {
+  position: relative;
+  width: 80px;
+  margin: 0 -10px;
+}
+
+.main-action {
+  display: block;
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.floating-button {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  box-shadow: 0 12px 24px rgba(118, 75, 162, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.floating-button .action-icon {
+  width: 32px;
+  height: 32px;
+}
+
+/* 交互效果 */
+.nav-item:active {
+  transform: translateY(2px);
+}
+
+.nav-item.active .nav-label {
+  color: #764ba2;
+}
+
+.main-action:active .floating-button {
+  transform: scale(0.95);
+  box-shadow: 0 6px 12px rgba(118, 75, 162, 0.3);
+}
+
+.inactive-icon {
+  width: 32px;
+  height: 32px;
+}
+
+/* 适配移动端 */
+@media (max-width: 480px) {
+  .nav-container {
+      padding: 0 12px;
+  }
+  
+  .nav-icon img {
+      width: 28px;
+      height: 28px;
+  }
+  
+  .floating-button {
+      width: 56px;
+      height: 56px;
+      bottom: 20px;
+  }
+  
+  .nav-label {
+      font-size: 11px;
+  }
+}
+
+@media (max-width: 360px) {
+  .nav-label {
+      font-size: 10px;
+  }
+  
+  .center-dock {
+      width: 70px;
+  }
+}
