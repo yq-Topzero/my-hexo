@@ -51,7 +51,6 @@
     border: 1px solid #2c9ff8;
     perspective: 1000px;
     transition: transform 0.3s, filter 0.3s;
-    animation: breathing 2s infinite; /*呼吸效果*/
 }
 
 .sidebar-toggle:hover {
