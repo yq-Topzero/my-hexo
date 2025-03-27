@@ -125,3 +125,6 @@
         scrollbar-width: 5px; /* Firefox移动端适配 */
     }
 }
+@media (hover: none) {
+    .option:hover { transform: none; box-shadow: none; }
+  }
