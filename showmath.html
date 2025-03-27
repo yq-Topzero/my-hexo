@@ -1182,33 +1182,12 @@
     <div class="nav-overlay"></div>
 </nav>
 <script>
-    // 获取所有导航按钮
+   // 获取所有导航按钮
     const navButtons = document.querySelectorAll('.nav-button');
-    
-    // 通用跳转处理函数
-    function handleNavigation(event, targetUrl) {
-        event.preventDefault(); // 阻止默认跳转行为
-        
-        // 这里可以添加跳转前的附加操作
-        console.log(`正在跳转到：${targetUrl}`);
-        
-        // 添加跳转过渡效果（示例）
-        document.body.style.opacity = '0.7';
-        setTimeout(() => {
-            window.location.href = targetUrl;
-        }, 300);
-    }
     
     // 为每个按钮绑定点击事件
     navButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            // 确认对话框示例
-            const confirmation = confirm('确定要跳转到新页面吗？');
-            if (!confirmation) {
-                e.preventDefault();
-                return;
-            }
-            
             // 获取目标URL
             const target = button.getAttribute('href');
             
