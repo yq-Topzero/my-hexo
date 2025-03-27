@@ -878,3 +878,6 @@ body {
   }
 
 }
+@media (hover: none) {
+  .option:hover { transform: none; box-shadow: none; }
+}
