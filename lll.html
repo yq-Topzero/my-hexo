@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 保持样式部分不变 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #f1faee; 
+            min-height: 100vh; 
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            aspect-ratio: 16/9; /* 保持画布比例 */
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            min-width: 180px;
+        }
+        .lil-gui {
+    --background: rgba(254, 251, 251, 0.95);
+    --width: 260px;
+    --title-background: rgba(200,200,200,0.15);
+    position: fixed !important;
+    left: 15px !important;
+    top: 30px !important;
+    z-index: 1000 !important;
+    max-height: 85vh;
+    overflow-y: auto;
+    border-radius: 10px;
+    backdrop-filter: blur(2px);
+}
+
+/* 添加以下样式 */
+.lil-gui .folder {
+    background: rgba(0,0,0,0.03) !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+}
+
+.lil-gui .folder .title {
+    cursor: default !important; /* 禁用折叠点击 */
+}
+
+
+/* 增强移动端适配 */
+@media (max-width: 768px), (max-height: 600px) {
+    .lil-gui {
+        --width: 220px;
+        left: 8px;
+        top: 8px;
+        transform: scale(0.9);
+        max-height: 90vh;
+    }
+    
+    .lil-gui .folder {
+        margin: 6px 0;
+    }
+    
+    .info-panel {
+        transform: scale(0.85);
+        right: 8px;
+        top: 8px;
+        max-width: 60%;
+    }
+}
+
+/* 优化控制器布局 */
+.lil-gui .controller {
+    padding: 8px 12px !important;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lil-gui .property-name {
+    flex: 0 1 60%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lil-gui .widget {
+    flex: 0 1 35%;
+}
+
+/* 优化颜色选择器 */
+.lil-gui .color-picker {
+    width: 28px !important;
+    height: 28px !important;
+}
+
+    </style>
+</head>
+<body>
+    <div id="container">
+        <canvas></canvas>
+        <div class="info-panel">
+            <div><strong>勾股定理：</strong>a² + b² = c²</div>
+            <div id="values">直角边a: 5 | 直角边b: 12 | 斜边c: 13.00</div>
+            <div id="areas">面积a²: 25 | 面积b²: 144 | 面积c²: 169.00</div>
+        </div>
+    </div>
+
+    <script type="module">
+        const params = {
+            a: 6,
+            b: 8,
+            scale: 10,
+            showSquares: true,
+            showLabels: true,
+            reverseA: false,  // 方向控制
+            reverseB: true,   // 默认反转b边方向
+            reverseC: false, 
+            showGrid: true,    // 网格显示开关
+            colorA: '#e63946',
+            colorB: '#1d3557',
+            colorC: '#2a9d8f'
+        };
+
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+        let centerX, centerY; // 动态计算中心点
+        
+        // 高清屏适配
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+
+            // 计算实际中心点（基于设备像素）
+            centerX = canvas.width / (2 * dpr);
+            centerY = canvas.height / (2 * dpr);
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制网格和坐标轴
+            if(params.showGrid) {
+                drawGrid();
+                drawAxes();
+            }
+            
+            const c = Math.hypot(params.a, params.b);
+            const gridSize = params.scale; // 获取网格尺寸
+            
+            // 使用全局中心点坐标（关键修复）
+            const A = [centerX, centerY];
+            const B = [A[0] + params.a * gridSize, A[1]];
+            const C = [A[0], A[1] - params.b * gridSize];
+            
+            // 绘制元素
+            drawTriangle(A, B, C);
+            if(params.showSquares) {
+                drawExternalSquare(A, B, params.colorA, params.reverseA);
+                drawExternalSquare(A, C, params.colorB, params.reverseB);
+                drawExternalSquare(B, C, params.colorC, params.reverseC);
+            }
+            if(params.showLabels) drawLabels(A, B, C, c);
+            updateInfo(params.a, params.b, c);
+        }
+
+
+        function drawGrid() {
+            ctx.save();
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 0.5;
+            
+            const gridSize = params.scale;
+            const width = canvas.width / window.devicePixelRatio;
+            const height = canvas.height / window.devicePixelRatio;
+            
+            // 修复网格绘制逻辑（从0开始绘制）
+            for(let x = 0; x <= width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            
+            for(let y = 0; y <= height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function drawAxes() {
+            ctx.save();
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 1;
+            
+            // 使用正确的中心点坐标
+            const width = canvas.width / window.devicePixelRatio;
+            const height = canvas.height / window.devicePixelRatio;
+            
+            // X轴
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            // 箭头
+            ctx.moveTo(width-10, centerY-5);
+            ctx.lineTo(width, centerY);
+            ctx.lineTo(width-10, centerY+5);
+            
+            // Y轴
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, height);
+            // 箭头
+            ctx.moveTo(centerX-5, 10);
+            ctx.lineTo(centerX, 0);
+            ctx.lineTo(centerX+5, 10);
+            
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawTriangle(A, B, C) {
+            ctx.beginPath();
+            ctx.moveTo(...A);
+            ctx.lineTo(...B);
+            ctx.lineTo(...C);
+            ctx.closePath();
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(241, 250, 238, 0.3)';
+            ctx.fill();
+        }
+
+        function drawExternalSquare(start, end, color, reverse) { // 添加缺失的reverse参数
+            ctx.save();
+            
+            // 计算边向量和法向量
+            const dx = end[0] - start[0];
+            const dy = end[1] - start[1];
+            const length = Math.hypot(dx, dy);
+            
+            // 根据reverse参数调整法向量方向
+            const perp = reverse ? [dy, -dx] : [-dy, dx];  // 修复方向计算
+            
+            // 标准化法向量
+            const norm = length / Math.hypot(perp[0], perp[1]);
+            const nx = perp[0] * norm;
+            const ny = perp[1] * norm;
+            
+            // 计算正方形四个顶点
+            const square = [
+                start,
+                end,
+                [end[0] + nx, end[1] + ny],
+                [start[0] + nx, start[1] + ny]
+            ];
+            
+            // 绘制正方形
+            ctx.fillStyle = color + '33';
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(...square[0]);
+            square.slice(1).forEach(p => ctx.lineTo(...p));
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+
+        function midPoint(p1, p2) {
+            return [(p1[0] + p2[0])/2, (p1[1] + p2[1])/2];
+        }
+
+        function drawLabel(position, text, color, type) {
+            ctx.save();
+            ctx.font = '14px Arial';
+            ctx.fillStyle = color;
+            
+            const [x, y] = position;
+            switch(type) {
+                case 'horizontal':
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'top';
+                    ctx.fillText(text, x, y + 8);
+                    break;
+                case 'vertical':
+                    ctx.textAlign = 'right';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(text, x - 8, y);
+                    break;
+                case 'hypotenuse':
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText(text, x + 8, y - 8);
+                    break;
+            }
+            ctx.restore();
+        }
+
+        function updateInfo(a, b, c) {
+            document.getElementById('values').textContent = 
+                `直角边a: ${a} | 直角边b: ${b} | 斜边c: ${c.toFixed(2)}`;
+            document.getElementById('areas').textContent = 
+                `面积a²: ${a*a} | 面积b²: ${b*b} | 面积c²: ${(c*c).toFixed(2)}`;
+        }
+
+        // 初始化GUI
+        import { GUI } from 'https://cdn.jsdelivr.net/npm/lil-gui@0.18.1/+esm';
+        const gui = new GUI({ 
+            container: document.body, // 改为body容器
+            autoPlace: false // 禁用自动定位
+        });
+        gui.domElement.style.zIndex = 1000;
+        // 基本参数
+        const basic = gui.addFolder('基本参数');
+        basic.add(params, 'a', 1, 15).step(1).name('直角边a').onChange(draw);
+        basic.add(params, 'b', 1, 15).step(1).name('直角边b').onChange(draw);
+        basic.add(params, 'scale', 20, 80).name('显示比例').onChange(draw);
+        basic.open(); // 保持展开
+        
+        // 显示控制
+        const display = gui.addFolder('显示控制');
+        display.add(params, 'showSquares').name('显示正方形').onChange(draw);
+        display.add(params, 'showLabels').name('显示标签').onChange(draw);
+        display.add(params, 'showGrid').name('显示网格').onChange(draw);
+        basic.open(); // 保持展开
+        // 新增方向控制
+        const direction = gui.addFolder('正方形方向');
+        direction.add(params, 'reverseA').name('反转a边方向').onChange(draw);
+        direction.add(params, 'reverseB').name('反转b边方向').onChange(draw);
+        direction.add(params, 'reverseC').name('反转c边方向').onChange(draw);
+        basic.open(); // 保持展开
+        
+        // 颜色控制
+        const colors = gui.addFolder('颜色设置');
+        colors.addColor(params, 'colorA').name('a边颜色').onChange(draw);
+        colors.addColor(params, 'colorB').name('b边颜色').onChange(draw);
+        colors.addColor(params, 'colorC').name('c边颜色').onChange(draw);
+        basic.open(); // 保持展开
+        // 移除文件夹箭头图标
+        const style = document.createElement('style');
+        style.textContent = `
+            .lil-gui .folder .title::after {
+                display: none !important;
+            }
+            .lil-gui .folder {
+                margin: 8px 0 !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        draw();
+    </script>
+</body>
+</html>

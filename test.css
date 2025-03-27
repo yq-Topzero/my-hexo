@@ -1,0 +1,875 @@
+/* 响应式布局 */
+body {
+    background: url('img/bg2.jpg') center/cover no-repeat fixed;
+    background-color:#c2dbe6;
+    font-family:'宋体';
+    margin:0;
+    /*min-height: 100vh;*/
+   background-size: 500px 711px;
+   min-height: 100vh;
+    display: block; 
+    overflow-x: hidden;
+}
+/*------------------ 侧边栏题目项样式---------------------- */
+/*关闭按钮*/
+.close-sidebar {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 35px;
+  height: 35px;
+  border: none;
+  background: rgba(255,50,50,0.9);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 0;
+}
+
+.close-sidebar:hover {
+  transform: rotate(90deg) scale(1.1);
+  background-size: 75%;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+  background-color: rgba(255,50,50,0.9);
+}
+/*   侧边栏题目项 */  
+/*======================================*/
+.star {
+  --star-size: 55px;
+  --star-color:rgb(250, 246, 21);
+  position: relative;
+  width: var(--star-size);
+  height: var(--star-size);
+  cursor: pointer;
+  margin: 8px;
+  filter: drop-shadow(0 2px 4px rgba(254, 254, 2, 0.1));
+  left:20px;
+}
+
+.star .checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  cursor: pointer;
+}
+
+/* 星形基础样式 */
+.svg-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.svg-outline,
+.svg-filled {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* 未选中状态 */
+.svg-outline {
+  fill: rgba(255,255,255,0.9);
+  stroke: #fffcfc;
+  stroke-width: 1px;
+}
+
+/* 选中状态 */
+.svg-filled {
+  fill: var(--star-color);
+  transform: scale(0);
+  opacity: 0;
+}
+
+/* 题号样式 */
+.question-number2 {
+  position: absolute;
+  top: 50%;
+  left: -10px;
+  transform: translate(-50%, -45%);
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #f8f7f8;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* 选中动画 */
+.star .checkbox:checked ~ .svg-container .svg-filled {
+  transform: scale(1);
+  opacity: 1;
+  animation: starPop 0.6s ease-out;
+}
+
+/* 已答题状态 */
+.question-item.answered .svg-outline {
+  stroke:#fed330;
+  stroke-width: 2px;
+}
+
+/* 当前题目 */
+.question-item.current {
+  animation: currentPulse 1.5s;
+  color: yellow;
+}
+
+@keyframes starPop {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes currentPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+/*==========进度条样式===========*/
+.question-progress {
+  margin-top: 18px;;
+  padding: 3px 5px;
+  background: #d74dd4;
+  border-radius: 8px;
+}
+
+.progress-bar {
+  height: 5px;
+  background: #F8EDEB;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(to right, #3e7396, #193fa1);
+  transition: width 0.3s ease;
+}
+/*================================*/
+/*=========作答区域样式================*/
+.quiz-container {
+    position: relative;
+    width: 90%;
+    max-width: 900px;
+    min-height: 400px; /* 设置最小高度，防止内容挤压 */
+    margin: 20px auto 40px; /* 增加顶部边距，确保在导航栏下方有足够空间 */
+    /* padding: 20px; */
+    box-sizing: border-box;
+    text-align: center;
+    padding-bottom: 100px; /* 给按钮留出空间 */
+    min-height: calc(100vh - 120px); /* 防止内容过短 */
+    background: rgba(255, 255, 255, 0); /* 半透明白色背景 */
+    border-radius: 15px;
+    /* border: 1px solid rgba(253, 253, 253, 0.912); */
+    font-size:15px;
+    font-weight: 600;
+    left: 0;
+    right: 0;
+    background: rgba(255,255,255,0.15);
+  /* backdrop-filter: blur(12px) saturate(180%); */
+  
+}
+.quiz-title{
+    font-size:30px;
+    /* font-family:'Courier, monospace'; */
+    font-family: "Helvetica Neue Black", "Arial Black", sans-serif;
+}
+.question-container {
+    position: relative;
+    height: 60vh; /* 使用视口高度而非最小高度 */
+    min-height: 400px; /* 设置最小高度 */
+    max-height: 800px; /* 设置最大高度 */
+    margin: 20px 0;
+    overflow: visible; /* 允许内容溢出*/
+    padding:20px 0 80px;
+}
+
+/* 单个题目页 */
+.question-page {
+    position: absolute;
+    width: 100%;
+    height: 100%; /* 确保高度填满容器 */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    left: 0; /* 确保水平位置固定 */
+    top: 0; /* 确保垂直位置固定 */
+}
+
+.question-page.active {
+    opacity: 1;
+    pointer-events: all;/* 允许点击 */
+    animation: slideIn 0.5s ease-in-out;
+}
+/* 扩大题目内容区域 */
+.question-content {
+  background: #dfdedc9b; /* 半透明背景 */
+    border-radius: 16px;
+    padding: 30px 40px; 
+    margin: 0 auto;
+    max-width: 800px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 300px;
+    position: relative;
+    border: 1px solid rgba(91, 45, 124, 0.8);
+}
+
+
+/* 题目文本优化 */
+.question-text {
+  font-size: clamp(0.5rem, 2.5vw, 1.5rem);
+  color: #2d3748;
+  line-height: 2.0;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #090909;
+  border-radius: 8px;
+  
+  /* 文字排版属性 */
+  text-indent: 2em; /* 首行缩进2个字符 */
+  text-align: left; /* 左对齐 */
+  padding: 1.5rem;  /* 统一内边距 */
+  margin: 1rem 0;   /* 添加外边距 */
+  
+  display: block;   /* 取消flex布局 */
+  height: auto;     /* 自动高度 */
+  
+  /* 文字换行优化 */
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+.question-number {
+    position: absolute;
+    left: -15px;
+    top: -15px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2em;
+    color: white;
+    font-weight: 700;
+    padding: 0;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+/*================================================*/
+/* ================= 填空题样式======================== */
+.fillblank-container {
+    position: relative;
+    width: 250px;
+    font-family: monospace;
+    margin: 30px auto; /* 居中显示 */
+}
+
+.fillblank-input {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+  background-color: #fff;
+  border: 4px solid #000;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 5px 5px 0 #000, 10px 10px 0 #4a90e2;
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.fillblank-input:focus {
+  animation: focus-pulse 4s cubic-bezier(0.25, 0.8, 0.25, 1) infinite,
+    glitch 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+}
+
+.fillblank-input:focus::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: white;
+  z-index: -1;
+}
+
+.fillblank-input:focus::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  z-index: -2;
+  clip-path: inset(0 100% 0 0);
+  animation: glitch-slice 4s steps(2, end) infinite;
+}
+
+@keyframes glitch-slice {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  10% {
+    clip-path: inset(0 5% 0 0);
+  }
+  20% {
+    clip-path: inset(0 80% 0 0);
+  }
+  30% {
+    clip-path: inset(0 10% 0 0);
+  }
+  40% {
+    clip-path: inset(0 50% 0 0);
+  }
+  50% {
+    clip-path: inset(0 30% 0 0);
+  }
+  60% {
+    clip-path: inset(0 70% 0 0);
+  }
+  70% {
+    clip-path: inset(0 15% 0 0);
+  }
+  80% {
+    clip-path: inset(0 90% 0 0);
+  }
+  90% {
+    clip-path: inset(0 5% 0 0);
+  }
+  100% {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+.fillblank-label {
+  position: absolute;
+  left: -3px;
+  top: -35px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #000;
+  padding: 5px 10px;
+  transform: rotate(-1deg);
+  z-index: 1;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.fillblank-input:focus + .fillblank-label {
+  transform: rotate(0deg) scale(1.05);
+  background-color: #4a90e2;
+}
+
+.smooth-type {
+  position: relative;
+  overflow: hidden;
+}
+
+.smooth-type::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0) 100%);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.smooth-type:focus::before {
+  opacity: 1;
+  animation: type-gradient 2s linear infinite;
+}
+
+@keyframes type-gradient {
+  0% {
+    background-position: 300px 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.fillblank-input::placeholder {
+  color: #888;
+  transition: color 0.3s ease;
+}
+
+.fillblank-input:focus::placeholder {
+  color: transparent;
+}
+
+.fillblank-input:focus {
+  animation: focus-pulse 4s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+}
+
+@keyframes focus-pulse {
+  0%,
+  100% {
+    border-color: #000;
+  }
+  50% {
+    border-color: #4a90e2;
+  }
+}
+/*========================================================*/ 
+/* 添加选择题和填空题的特定的题号样式 */
+.choice-question .question-number {
+  background: linear-gradient(135deg, #bdc30ed3, #f4e805);
+}
+/* 选择题标签样式 */
+.choice-label {
+  transition: all 0.2s ease;
+}
+
+.fillblank-question .question-number {
+  background: linear-gradient(135deg, #A2D2FF, #BDE0FE);
+}
+
+/* 填空题输入框样式 */
+.fillblank-question .fillblank-input {
+  border-bottom: 2px solid #A2D2FF;
+}
+
+.fillblank-question .fillblank-input:focus {
+  border-bottom-color: #BDE0FE;
+}
+
+/* 回顾卡片类型样式 */
+.choice-review {
+  border-left: 5px solid #F8AD9D;
+}
+
+.fillblank-review {
+  border-left: 5px solid #A2D2FF;
+}
+/*====================================================*/
+/*====================================================*/
+/* 确保review-layer中的元素位置固定 */
+.review-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(37, 36, 36, 0.9);
+    z-index: 9999;
+    overflow: hidden;
+    display: none;
+}
+
+.review-container {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    height: 80vh;
+    margin: 10vh auto;
+    background: rgba(58, 54, 54, 0.9);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* 添加固定位置 */
+    left: 0;
+    right: 0;
+}
+
+/* 确保review-card位置固定 */
+.review-card {
+    width: 100%;
+    padding: 20px;
+    margin-bottom: 30px;
+    background: #fcfc1f;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 1;
+    /* 添加固定尺寸 */
+    min-height: 200px;
+    box-sizing: border-box;
+}
+
+/* 继续挑战按钮 */
+.challenge-btn {
+    background: linear-gradient(135deg, #ff7675, #d63031);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(214, 48, 49, 0.3);
+    margin: 0 8px;
+}
+
+.challenge-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(214, 48, 49, 0.4);
+}
+
+/* 查看历史记录按钮 */
+.view-reviews-btn {
+    background: linear-gradient(135deg, #74b9ff, #0984e3);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(9, 132, 227, 0.3);
+    margin-top: 15px;
+    width: 100%;
+}
+
+.view-reviews-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(9, 132, 227, 0.4);
+}
+
+/* 课堂练习完成页面查看记录按钮 */
+#view-review-btn {
+    background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+    margin-top: 15px;
+}
+
+#view-review-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4);
+}
+
+/* 防止题目内容被按钮遮挡 */
+.question-container {
+  padding-bottom: 10px; /* 根据按钮高度调整 */
+  position: relative;
+  margin-bottom: 100px;
+}
+/* classroom.css */
+/*=====================================*/
+/*==============题目滑入效果动画============*/
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes optionCheck {
+  0% { transform: scale(0.95); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+/*===========================================*/
+/* 题目样式 */
+.question-page {
+  display: none;
+}
+
+.question-page.active {
+  display: block;
+  animation: slideIn 0.5s ease-in-out;
+}
+.quiz-container {
+  margin-top: 20px;
+  padding: 20px;
+  position: relative;
+  width: 88%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+/*=========================================*/
+/* 选项基础样式 */
+.options {
+  list-style: none;
+  padding: 0;
+  margin-left: 55px;
+}
+.option {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 20px;
+  background: rgba(255,255,255,0.8)!important;
+  margin: 10px 0;
+  transform: scale(0.9);
+  cursor: pointer;
+  padding: 0;
+  width: 80% !important; /* 强制全宽 */
+  max-width: none !important;
+  height: auto;
+  min-height: 50px;
+  box-sizing: border-box;
+}
+/* radio按钮样式 */
+.option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+/* 选中状态 */
+.option:nth-child(1) input[type="radio"]:checked + label,
+.option:nth-child(2) input[type="radio"]:checked + label,
+.option:nth-child(3) input[type="radio"]:checked + label {
+  background-clip: padding-box !important;
+  border-radius: 20px; /* 匹配容器圆角 */
+}
+
+.option:nth-child(1) input[type="radio"]:checked + label {
+  background: rgba(21, 196, 250, 0.9);
+}
+
+.option:nth-child(2) input[type="radio"]:checked + label {
+  background: rgba(21, 254, 165, 0.9);
+}
+
+.option:nth-child(3) input[type="radio"]:checked + label {
+  background: rgba(248, 41, 203, 0.9);
+}
+
+/* 标签样式 */
+.option label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  font-size: 17px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .quiz-container {
+      margin-top: 55px;
+      width: 95%;
+      padding: 15px;
+  }
+  
+  .option {
+      width: 60% !important; 
+      margin: 8px 0; /* 调整间距 */
+  }
+  
+  .option label {
+      padding: 15px !important; /* 统一内边距 */
+  }
+}
+
+@media (max-width: 480px) {
+  .quiz-container {
+      margin-top: 10px; /* 优化顶部间距 */
+  }
+  
+  .option label {
+      padding: 10px 15px !important;
+      font-size: 18px;
+      min-height: 50px; /* 确保最小高度 */
+  }
+}
+
+/* 确保题目文本有足够的左侧边距 */
+.question-text {
+  padding-left: 30px; 
+}
+/* ------选项字母样式 -------------*/
+.option-letter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: white;
+  margin-right: 12px;
+  font-weight: bold;
+
+}
+.option:nth-child(1) .option-letter {
+  color: #FFD166;
+}
+
+.option:nth-child(2) .option-letter {
+  color: #06D6A0;
+}
+
+.option:nth-child(3) .option-letter {
+  color: #EF767A;
+}
+
+.option:nth-child(4) .option-letter {
+  color: #73D2DE;
+}
+
+/* 选项文本样式 */
+.option-text {
+  color: #333;
+  flex: 1;
+  text-align: left;
+  margin-left: 0;
+}
+/* 选项悬停效果 */
+.option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 选中的选项样式 */
+.option.selected {
+  transform: scale(1.03);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+}
+/*===================================*/
+/*=========================================*/
+.prev-btn,
+.next-btn {
+  display: inline-block;
+  padding: 10px 10px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  background-color: #f78fb3;
+  color: #f8f8f7;
+  border: 2px solid #e885a7;
+  box-shadow: 3px 4px 0px  #0c8853;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  transform: none !important;
+  border-radius: 50%; 
+  
+}
+.prev-btn:hover,
+.next-btn:hover {
+    background-color: #f66591d8;
+  color: #fff;
+  border: 2px solid #e15765;
+  box-shadow: 5px 5px 0px #94b406;
+}
+.prev-btn:active,
+.next-btn:active {
+    background-color: #f78fb3;
+    box-shadow: none;
+    transform: translateY(4px);
+}
+/* -------------------- 控制按钮样式 -------------------- */
+/* 修改控制按钮容器样式 */
+.controls {
+  position: absolute;
+    bottom: -50px; 
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-sizing: border-box;
+    left:300px;
+  /* z-index: 10; */
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .controls {
+      bottom: 15px;
+      width: 60px;
+      padding: 0 8px;
+  }
+  
+  .prev-btn,
+  .next-btn {
+      padding: 12px 18px;
+      font-size: 15px;
+      min-width: 50px;
+  }
+
+  .question-text {
+    font-size: clamp(0.8rem, 4vw, 1rem); /* 手机端放大到4vw基准 */
+    line-height: 1.7; /* 增加行距补偿小屏幕 */
+    text-indent: 1.5em; /* 减少缩进量 */
+    font-weight: bold;
+  }
+}
+/* 保证按钮始终在可视区域底部 */
+@media (max-height: 600px) {
+  .controls {
+      bottom: 10px;
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      width: 60px!important;
+  }
+  .prev-btn,
+  .next-btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      min-width: 50px;
+      height: 50px;
+      width: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .controls {
+      bottom: 10px;
+      width: 90px;
+      padding: 0 5px;
+  }
+  
+  .prev-btn,
+  .next-btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      min-width: 50px;
+      height: 60px;
+  }
+
+}

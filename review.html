@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>习题回顾 - 烙饼问题</title>
+    <link rel="stylesheet" href="test.css">
+    <link rel="stylesheet" href="style_score.css">
+    <link rel="stylesheet" href="stlye_sidebar.css">
+    <link rel="stylesheet" href="review_style.css">
+    <link rel="stylesheet" href="nav.css">
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-item ">
+            <a href="index.html">
+                <img src="img/火箭.png" class="nav__image">
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="test.html">
+              <img src="img/游戏勋章.png" class="nav__image">
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="review.html">
+                <img src="img/游戏分数分值.png" class="nav__image">
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="showmath.html">
+                <img src="img/徽章.png" class="nav__image">
+            </a>
+        </div>
+        <div class="nav-overlay"></div>
+    </nav>
+    <!-- 习题回顾子导航 -->
+    <div class="subnav-container">
+        <div class="subnav">
+            <button class="subnav-item active" data-type="classroom">课堂练习回顾</button>
+            <button class="subnav-item" data-type="homework">课后练习回顾</button>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="review-page-container">
+        <!-- 课堂练习回顾内容 -->
+        <div class="review-section active" id="classroom-review">
+            <div class="review-cards" id="classroom-cards">
+                <!-- 卡片将由JavaScript动态生成 -->
+                <div class="empty-state">
+                    <p>暂无课堂练习记录</p>
+                    <a href="index.html" class="start-exercise-btn">开始练习</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 课后练习回顾内容 -->
+        <div class="review-section" id="homework-review">
+            <div class="review-cards" id="homework-cards">
+                <!-- 卡片将由JavaScript动态生成 -->
+                <div class="empty-state">
+                    <p>暂无课后练习记录</p>
+                    <a href="test.html" class="start-exercise-btn">开始练习</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 详细回顾弹出层 -->
+    <div class="detail-review-overlay">
+        <div class="detail-review-container">
+            <button class="close-detail">&times;</button>
+            <h2 class="detail-title">练习详情</h2>
+            <div class="detail-stats">
+                <div class="stat-item">
+                    <span class="stat-label">总题数：</span>
+                    <span class="stat-value stat-total">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">正确数：</span>
+                    <span class="stat-value stat-correct">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">正确率：</span>
+                    <span class="stat-value stat-accuracy">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">用时：</span>
+                    <span class="stat-value time-value">0s</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">日期：</span>
+                    <span class="stat-value date-value">2023-01-01</span>
+                </div>
+            </div>
+            <div class="detail-questions">
+                <!-- 题目详情将由JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 通用导航逻辑
+document.addEventListener("DOMContentLoaded", function () {
+  const navItems = document.querySelectorAll(".nav-item");
+  const overlay = document.querySelector(".nav-overlay");
+  
+  // 初始化激活状态
+  setActiveByUrl();
+  updateOverlayPosition();
+
+  navItems.forEach(item => {
+    item.addEventListener("click", function(e) {
+      e.preventDefault();
+      const targetPage = this.querySelector('a').href;
+      
+      // 更新激活状态
+      navItems.forEach(i => i.classList.remove('active'));
+      this.classList.add('active');
+      
+      // 更新覆盖层位置
+      updateOverlayPosition();
+      
+      // 延迟跳转
+      setTimeout(() => {
+        window.location.href = targetPage;
+      }, 300);
+    });
+  });
+
+  function setActiveByUrl() {
+    const path = window.location.pathname.split('/').pop();
+    navItems.forEach(item => {
+      const link = new URL(item.querySelector('a').href).pathname.split('/').pop();
+      item.classList.toggle('active', link === path);
+    });
+  }
+
+  function updateOverlayPosition() {
+    const activeItem = document.querySelector('.nav-item.active');
+    if (!activeItem) return;
+    
+    const itemWidth = activeItem.offsetWidth;
+    const itemOffset = activeItem.offsetLeft;
+    
+    overlay.style.width = `${itemWidth}px`;
+    overlay.style.left = `${itemOffset}px`;
+  }
+  
+  // 窗口resize监听
+  window.addEventListener('resize', () => {
+    updateOverlayPosition();
+  });
+});
+    </script>
+    <script src="review.js"></script>
+</body>
+</html> 
