@@ -9,6 +9,8 @@ body {
    min-height: 100vh;
     display: block; 
     overflow-x: hidden;
+    /* width:500px;
+    height:711px; */
 }
 /*------------------ 侧边栏题目项样式---------------------- */
 /*关闭按钮*/
@@ -183,7 +185,7 @@ body {
     height: 60vh; /* 使用视口高度而非最小高度 */
     min-height: 400px; /* 设置最小高度 */
     max-height: 800px; /* 设置最大高度 */
-    margin: 20px 0;
+    margin: 0px 0;
     overflow: visible; /* 允许内容溢出*/
     padding:20px 0 80px;
 }
@@ -689,9 +691,9 @@ body {
 /* 移动端适配 */
 @media (max-width: 768px) {
   .quiz-container {
-      margin-top: 55px;
+      margin-top: 40px;
       width: 95%;
-      padding: 15px;
+      padding: 10px;
   }
   
   .option {
@@ -706,13 +708,16 @@ body {
 
 @media (max-width: 480px) {
   .quiz-container {
-      margin-top: 10px; /* 优化顶部间距 */
+      margin-top: -25px; /* 优化顶部间距 */
   }
   
   .option label {
-      padding: 10px 15px !important;
-      font-size: 18px;
+      padding: 6px 14px !important;
+      font-size: 20px;
       min-height: 50px; /* 确保最小高度 */
+  }
+  .option-text{
+      font-size: 2.5vh;
   }
 }
 
@@ -805,7 +810,7 @@ body {
 /* 修改控制按钮容器样式 */
 .controls {
   position: absolute;
-    bottom: -50px; 
+    bottom: 100px; 
     width: 100%;
     display: flex;
     justify-content: space-between;
