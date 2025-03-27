@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <!-- 保持样式部分不变 -->
+   <meta charset="UTF-8">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -51,14 +51,14 @@
     backdrop-filter: blur(2px);
 }
 
-/* 添加以下样式 */
+
 .lil-gui .folder {
     background: rgba(0,0,0,0.03) !important;
     border: 1px solid rgba(0,0,0,0.1) !important;
 }
 
 .lil-gui .folder .title {
-    cursor: default !important; /* 禁用折叠点击 */
+    cursor: default !important;
 }
 
 
@@ -84,7 +84,7 @@
     }
 }
 
-/* 优化控制器布局 */
+
 .lil-gui .controller {
     padding: 8px 12px !important;
     min-height: 36px;
@@ -104,7 +104,7 @@
     flex: 0 1 35%;
 }
 
-/* 优化颜色选择器 */
+
 .lil-gui .color-picker {
     width: 28px !important;
     height: 28px !important;
@@ -130,7 +130,7 @@
             showSquares: true,
             showLabels: true,
             reverseA: false,  // 方向控制
-            reverseB: true,   // 默认反转b边方向
+            reverseB: true,   
             reverseC: false, 
             showGrid: true,    // 网格显示开关
             colorA: '#e63946',
@@ -142,7 +142,7 @@
         const ctx = canvas.getContext('2d');
         let centerX, centerY; // 动态计算中心点
         
-        // 高清屏适配
+        
         function resizeCanvas() {
             const dpr = window.devicePixelRatio || 1;
             const rect = canvas.getBoundingClientRect();
@@ -169,7 +169,7 @@
             const c = Math.hypot(params.a, params.b);
             const gridSize = params.scale; // 获取网格尺寸
             
-            // 使用全局中心点坐标（关键修复）
+           
             const A = [centerX, centerY];
             const B = [A[0] + params.a * gridSize, A[1]];
             const C = [A[0], A[1] - params.b * gridSize];
@@ -195,7 +195,7 @@
             const width = canvas.width / window.devicePixelRatio;
             const height = canvas.height / window.devicePixelRatio;
             
-            // 修复网格绘制逻辑（从0开始绘制）
+            
             for(let x = 0; x <= width; x += gridSize) {
                 ctx.beginPath();
                 ctx.moveTo(x, 0);
@@ -217,7 +217,7 @@
             ctx.strokeStyle = '#666';
             ctx.lineWidth = 1;
             
-            // 使用正确的中心点坐标
+           
             const width = canvas.width / window.devicePixelRatio;
             const height = canvas.height / window.devicePixelRatio;
             
@@ -255,7 +255,7 @@
             ctx.fill();
         }
 
-        function drawExternalSquare(start, end, color, reverse) { // 添加缺失的reverse参数
+        function drawExternalSquare(start, end, color, reverse) { 
             ctx.save();
             
             // 计算边向量和法向量
@@ -264,7 +264,7 @@
             const length = Math.hypot(dx, dy);
             
             // 根据reverse参数调整法向量方向
-            const perp = reverse ? [dy, -dx] : [-dy, dx];  // 修复方向计算
+            const perp = reverse ? [dy, -dx] : [-dy, dx];  
             
             // 标准化法向量
             const norm = length / Math.hypot(perp[0], perp[1]);
@@ -333,8 +333,8 @@
         // 初始化GUI
         import { GUI } from 'https://cdn.jsdelivr.net/npm/lil-gui@0.18.1/+esm';
         const gui = new GUI({ 
-            container: document.body, // 改为body容器
-            autoPlace: false // 禁用自动定位
+            container: document.body, 
+            autoPlace: false 
         });
         gui.domElement.style.zIndex = 1000;
         // 基本参数
@@ -342,20 +342,20 @@
         basic.add(params, 'a', 1, 15).step(1).name('直角边a').onChange(draw);
         basic.add(params, 'b', 1, 15).step(1).name('直角边b').onChange(draw);
         basic.add(params, 'scale', 20, 80).name('显示比例').onChange(draw);
-        basic.open(); // 保持展开
+        basic.open(); 
         
         // 显示控制
         const display = gui.addFolder('显示控制');
         display.add(params, 'showSquares').name('显示正方形').onChange(draw);
         display.add(params, 'showLabels').name('显示标签').onChange(draw);
         display.add(params, 'showGrid').name('显示网格').onChange(draw);
-        basic.open(); // 保持展开
+        basic.open(); 
         // 新增方向控制
         const direction = gui.addFolder('正方形方向');
         direction.add(params, 'reverseA').name('反转a边方向').onChange(draw);
         direction.add(params, 'reverseB').name('反转b边方向').onChange(draw);
         direction.add(params, 'reverseC').name('反转c边方向').onChange(draw);
-        basic.open(); // 保持展开
+        basic.open();
         
         // 颜色控制
         const colors = gui.addFolder('颜色设置');
