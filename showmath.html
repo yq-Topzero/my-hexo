@@ -345,17 +345,17 @@
         }
         @media (max-width: 768px) {
         .scene {
-            transform: scale(0.8);
-            -webkit-transform: scale(0.8);
-        }
-        /* 减小动画移动距离 */
-        .square, .circle, .triangle {
             transform: scale(0.7);
             -webkit-transform: scale(0.7);
         }
+        /* 减小动画移动距离 */
+        .square, .circle, .triangle {
+            transform: scale(0.6);
+            -webkit-transform: scale(0.6);
+        }
         .square::after, .circle::after, .triangle::after {
-            transform: scale(0.8);
-            -webkit-transform: scale(0.8);
+            transform: scale(0.7);
+            -webkit-transform: scale(0.7);
         }
     }
 
